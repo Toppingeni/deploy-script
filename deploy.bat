@@ -16,7 +16,7 @@ if "%~2"=="" (
 :: Configuration
 set action=%~1
 set appName=%~2
-set entryPoint=.\build\server.js
+set entryPoint=.\build\index.js
 
 :: Check if PM2 is installed
 where pm2 >nul 2>&1
