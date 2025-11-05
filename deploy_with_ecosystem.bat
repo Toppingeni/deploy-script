@@ -31,7 +31,6 @@ if /i "%action%"=="start" (
         echo [INFO] %appName% is already running, restarting...
         pm2 restart "%appName%"
     ) else (
-        :: เช็คว่ามีไฟล์ config มั้ย เฉพาะตอน start ใหม่
         if not exist "%configFile%" (
             echo [ERROR] Config file "%configFile%" not found
             exit /b 1
@@ -54,7 +53,6 @@ if /i "%action%"=="start" (
         echo [INFO] Restarting %appName%...
         pm2 restart "%appName%"
     ) else (
-        :: ยังไม่รันมาก่อน ให้ start จาก config แทน
         if not exist "%configFile%" (
             echo [ERROR] Config file "%configFile%" not found
             exit /b 1
