@@ -1,22 +1,17 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: ตรวจว่ามีพารามิเตอร์ไหม
 if "%~1"=="" (
   echo Usage: createconfigpm2.bat [path]
   exit /b 1
 )
 
-:: รับ path ที่ส่งเข้ามา
 set TARGET_PATH=%~1
 
-:: ตั้งชื่อไฟล์ config
 set CONFIG_FILE=%TARGET_PATH%\ecosystem.config.cjs
 
-:: สร้างโฟลเดอร์ logs ถ้ายังไม่มี
 if not exist "%TARGET_PATH%\logs" mkdir "%TARGET_PATH%\logs"
 
-:: เขียนไฟล์ config
 (
 echo module.exports = {
 echo   apps: [
