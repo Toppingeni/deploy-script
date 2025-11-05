@@ -1,14 +1,5 @@
 @echo off
 setlocal enabledelayedexpansion
-
-:: Usage:
-:: deploy_with_ecosystem.bat [start|stop|restart|status|logs] [appName] [configFile(optional)]
-::
-:: ตัวอย่าง:
-:: deploy_with_ecosystem.bat start kim-pai-repair-flow
-:: deploy_with_ecosystem.bat start kim-pai-repair-flow "E:\Deploy\Pm2\kim-pai-repair-flow\ecosystem.config.cjs"
-
-:: Check if minimum parameters are passed
 if "%~1"=="" (
     echo Usage: deploy_with_ecosystem.bat [start^|stop^|restart^|status^|logs] [appName] [configFile^]
     exit /b 1
@@ -20,24 +11,20 @@ if "%~2"=="" (
     exit /b 1
 )
 
-:: Configuration
 set action=%~1
 set appName=%~2
 
-:: ถ้าไม่ส่ง configFile มาก็ใช้ ecosystem.config.cjs ในโฟลเดอร์ปัจจุบัน
 set configFile=ecosystem.config.cjs
 if not "%~3"=="" (
     set configFile=%~3
 )
 
-:: Check if PM2 is installed
 where pm2 >nul 2>&1
 if %ERRORLEVEL% neq 0 (
     echo [ERROR] PM2 is not installed or not in PATH
     exit /b 1
 )
 
-:: Main logic
 if /i "%action%"=="start" (
     call :CheckRunning
     if !isRunning! equ 1 (
@@ -88,7 +75,6 @@ if /i "%action%"=="start" (
 
 exit /b 0
 
-:CheckRunning
 set isRunning=0
 pm2 list | findstr /i /c:" %appName% " >nul && set isRunning=1
 goto :eof
