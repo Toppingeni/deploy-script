@@ -42,7 +42,7 @@ const configContent = `module.exports = {
 `;
 
 // เขียนไฟล์ config
-const outputPath = path.join(destination, "ecosystem.config.js");
+const outputPath = path.join(destination, "ecosystem.config.cjs");
 fs.writeFileSync(outputPath, configContent, "utf8");
 
 console.log(`[OK] Generated ${outputPath} for app "${appName}"`);
