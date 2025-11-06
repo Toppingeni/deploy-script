@@ -28,9 +28,8 @@ const configContent = `module.exports = {
     {
       name: '${appName}',
       cwd: '${cwdEscaped}',
-      script: 'npm',
-      args: 'run start',
-      interpreter: 'none',
+      script: 'dist\\server\\node-build.mjs',
+      interpreter: 'node',
       instances: 1,
       exec_mode: 'fork',
       out_file: 'logs/out.log',
