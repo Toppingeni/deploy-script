@@ -16,7 +16,16 @@ if "%~2"=="" (
 :: Configuration
 set action=%~1
 set appName=%~2
-set entryPoint=.\build\index.js
+
+:: Auto-detect entry point (server.js > index.js)
+if exist ".\build\server.js" (
+    set entryPoint=.\build\server.js
+) else if exist ".\build\index.js" (
+    set entryPoint=.\build\index.js
+) else (
+    echo [ERROR] No entry point found: expected .\build\server.js or .\build\index.js
+    exit /b 1
+)
 
 :: Check if PM2 is installed
 where pm2 >nul 2>&1
