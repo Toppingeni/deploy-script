@@ -16,29 +16,12 @@ if "%~2"=="" (
 :: Configuration
 set action=%~1
 set appName=%~2
-set entryPoint=.\server.js
 
 :: Check if PM2 is installed
 where pm2 >nul 2>&1
 if %ERRORLEVEL% neq 0 (
     echo [ERROR] PM2 is not installed or not in PATH
     exit /b 1
-)
-
-:: Check entry point exists for start/restart
-if /i "%action%"=="start" (
-    if not exist "%entryPoint%" (
-        echo [ERROR] Entry point not found: %entryPoint%
-        echo Make sure next.config.js has output: 'standalone'
-        exit /b 1
-    )
-)
-if /i "%action%"=="restart" (
-    if not exist "%entryPoint%" (
-        echo [ERROR] Entry point not found: %entryPoint%
-        echo Make sure next.config.js has output: 'standalone'
-        exit /b 1
-    )
 )
 
 :: Main logic
@@ -49,7 +32,7 @@ if /i "%action%"=="start" (
         pm2 restart %appName%
     ) else (
         echo [INFO] Starting %appName%...
-        pm2 start "%entryPoint%" --name "%appName%"
+        pm2 start npm --name "%appName%" -- start
         pm2 save
     )
 ) else if /i "%action%"=="stop" (
@@ -67,7 +50,7 @@ if /i "%action%"=="start" (
         pm2 restart %appName%
     ) else (
         echo [INFO] %appName% is not running, starting instead...
-        pm2 start "%entryPoint%" --name "%appName%"
+        pm2 start npm --name "%appName%" -- start
         pm2 save
     )
 ) else if /i "%action%"=="status" (
