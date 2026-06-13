@@ -1,5 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
+:: patched: restart ใช้ --update-env เสมอ (PORT contract — plan §4A)
+:: pm2 inherit env จาก shell ที่เรียก — workflow ตั้ง PORT/APP_BASE_PATH/PUBLIC_BASE_URL ก่อนเรียก start
 
 :: Check if minimum parameters are passed
 if "%~1"=="" (
@@ -28,8 +30,8 @@ if %ERRORLEVEL% neq 0 (
 if /i "%action%"=="start" (
     call :CheckRunning
     if !isRunning! equ 1 (
-        echo [INFO] %appName% is already running, restarting...
-        pm2 restart %appName%
+        echo [INFO] %appName% is already running, restarting with updated env...
+        pm2 restart %appName% --update-env
     ) else (
         echo [INFO] Starting %appName%...
         pm2 start npm --name "%appName%" -- start
@@ -46,8 +48,8 @@ if /i "%action%"=="start" (
 ) else if /i "%action%"=="restart" (
     call :CheckRunning
     if !isRunning! equ 1 (
-        echo [INFO] Restarting %appName%...
-        pm2 restart %appName%
+        echo [INFO] Restarting %appName% with updated env...
+        pm2 restart %appName% --update-env
     ) else (
         echo [INFO] %appName% is not running, starting instead...
         pm2 start npm --name "%appName%" -- start
