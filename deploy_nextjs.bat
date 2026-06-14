@@ -28,7 +28,7 @@ if %ERRORLEVEL% neq 0 (
 
 :: Main logic
 if /i "%action%"=="start" (
-    echo [INFO] (Re)starting %appName% from a clean slate...
+    echo [INFO] Starting %appName% from a clean slate...
     pm2 delete "%appName%" >nul 2>&1
     pm2 start node_modules/next/dist/bin/next --name "%appName%" --interpreter node -- start
     pm2 save
