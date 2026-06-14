@@ -1,35 +1,30 @@
 @echo off
 setlocal enabledelayedexpansion
-:: patched: restart ใช้ --update-env เสมอ (PORT contract — plan §4A)
-:: pm2 inherit env จาก shell ที่เรียก — workflow ตั้ง PORT/APP_BASE_PATH/PUBLIC_BASE_URL ก่อนเรียก start
+:: nextjs deploy via PM2 - start runs the Next.js binary directly with node
+:: (pm2 start npm fails on Windows: PM2 runs NPM.CMD as a JS module)
+:: pm2 inherits env from the calling shell; the workflow sets PORT/APP_BASE_PATH
 
-:: Check if minimum parameters are passed
 if "%~1"=="" (
     echo Usage: deploy_nextjs.bat [start^|stop^|restart^|status^|logs] [appName]
     exit /b 1
 )
-
 if "%~2"=="" (
     echo [ERROR] Application name is required
-    echo Usage: deploy_nextjs.bat [start^|stop^|restart^|status^|logs] [appName]
     exit /b 1
 )
 
-:: Configuration
 set action=%~1
 set appName=%~2
 
-:: Check if PM2 is installed
-where pm2 >nul 2>&1
+where pm2 >/dev/null 2>&1
 if %ERRORLEVEL% neq 0 (
     echo [ERROR] PM2 is not installed or not in PATH
     exit /b 1
 )
 
-:: Main logic
 if /i "%action%"=="start" (
     echo [INFO] Starting %appName% from a clean slate...
-    pm2 delete "%appName%" >nul 2>&1
+    pm2 delete "%appName%" >/dev/null 2>&1
     pm2 start node_modules/next/dist/bin/next --name "%appName%" --interpreter node -- start
     pm2 save
 ) else if /i "%action%"=="stop" (
@@ -56,7 +51,6 @@ if /i "%action%"=="start" (
     pm2 logs %appName%
 ) else (
     echo [ERROR] Invalid action: %action%
-    echo Usage: deploy_nextjs.bat [start^|stop^|restart^|status^|logs] [appName]
     exit /b 1
 )
 
@@ -64,5 +58,5 @@ exit /b 0
 
 :CheckRunning
 set isRunning=0
-pm2 list | findstr /i /c:"%appName%" >nul && set isRunning=1
+pm2 list | findstr /i /c:"%appName%" >/dev/null && set isRunning=1
 goto :eof
