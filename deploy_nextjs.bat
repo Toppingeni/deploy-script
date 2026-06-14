@@ -28,15 +28,10 @@ if %ERRORLEVEL% neq 0 (
 
 :: Main logic
 if /i "%action%"=="start" (
-    call :CheckRunning
-    if !isRunning! equ 1 (
-        echo [INFO] %appName% is already running, restarting with updated env...
-        pm2 restart %appName% --update-env
-    ) else (
-        echo [INFO] Starting %appName%...
-        pm2 start npm --name "%appName%" -- start
-        pm2 save
-    )
+    echo [INFO] (Re)starting %appName% from a clean slate...
+    pm2 delete "%appName%" >nul 2>&1
+    pm2 start node_modules/next/dist/bin/next --name "%appName%" --interpreter node -- start
+    pm2 save
 ) else if /i "%action%"=="stop" (
     call :CheckRunning
     if !isRunning! equ 1 (
@@ -52,7 +47,7 @@ if /i "%action%"=="start" (
         pm2 restart %appName% --update-env
     ) else (
         echo [INFO] %appName% is not running, starting instead...
-        pm2 start npm --name "%appName%" -- start
+        pm2 start node_modules/next/dist/bin/next --name "%appName%" --interpreter node -- start
         pm2 save
     )
 ) else if /i "%action%"=="status" (
