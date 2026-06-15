@@ -1,6 +1,5 @@
 @echo off
 setlocal enabledelayedexpansion
-:: patched: restart ใช้ --update-env เสมอ (PORT contract — plan §4A) + แก้ label :CheckRunning ที่หายไป
 if "%~1"=="" (
     echo Usage: deploy_with_ecosystem.bat [start^|stop^|restart^|status^|logs] [appName] [configFile^]
     exit /b 1
@@ -29,9 +28,8 @@ if %ERRORLEVEL% neq 0 (
 if /i "%action%"=="start" (
     call :CheckRunning
     if !isRunning! equ 1 (
-        echo [INFO] %appName% is already running, restarting with updated env...
-        pm2 restart "%configFile%" --only "%appName%" --update-env
-        pm2 save
+        echo [INFO] %appName% is already running, restarting...
+        pm2 restart "%appName%"
     ) else (
         if not exist "%configFile%" (
             echo [ERROR] Config file "%configFile%" not found
@@ -52,9 +50,8 @@ if /i "%action%"=="start" (
 ) else if /i "%action%"=="restart" (
     call :CheckRunning
     if !isRunning! equ 1 (
-        echo [INFO] Restarting %appName% with updated env...
-        pm2 restart "%configFile%" --only "%appName%" --update-env
-        pm2 save
+        echo [INFO] Restarting %appName%...
+        pm2 restart "%appName%"
     ) else (
         if not exist "%configFile%" (
             echo [ERROR] Config file "%configFile%" not found
@@ -70,13 +67,12 @@ if /i "%action%"=="start" (
     pm2 logs "%appName%"
 ) else (
     echo [ERROR] Invalid action: %action%
-    echo Usage: deploy_with_ecosystem.bat [start^|stop^|restart^|status^|logs] [appName] [configFile^]
+    echo Usage: deploy.bat [start^|stop^|restart^|status^|logs] [appName] [configFile^]
     exit /b 1
 )
 
 exit /b 0
 
-:CheckRunning
 set isRunning=0
 pm2 list | findstr /i /c:" %appName% " >nul && set isRunning=1
 goto :eof
