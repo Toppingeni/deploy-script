@@ -23,13 +23,22 @@ fs.mkdirSync(logsDir, { recursive: true });
 const cwdEscaped = destination.replace(/\\/g, "\\\\");
 
 // เนื้อไฟล์ ecosystem.config.js
+// Forward slashes in script path: a single-quoted 'dist\server\...' makes Node
+// interpret \s and \n as escapes (→ "distserver" + newline) and pm2 can't find it.
+// Forward slashes work on Windows and sidestep the escaping entirely.
+// env_file + NODE_ENV mirror the proven hand-written config so the app loads .env
+// and serves its production SPA build.
 const configContent = `module.exports = {
   apps: [
     {
       name: '${appName}',
       cwd: '${cwdEscaped}',
-      script: 'dist\\server\\node-build.mjs',
+      script: 'dist/server/node-build.mjs',
       interpreter: 'node',
+      env_file: '.env',
+      env: {
+        NODE_ENV: 'production',
+      },
       instances: 1,
       exec_mode: 'fork',
       out_file: 'logs/out.log',
